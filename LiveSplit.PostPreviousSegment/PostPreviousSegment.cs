@@ -169,10 +169,16 @@ namespace LiveSplit
 
             TimingMethod method = GetSplitTimingMethod(state);
             int prevSplitIndex = state.CurrentSplitIndex - 1;
-            ISegment prevSeg = state.Run[prevSplitIndex]; // TODO: I think this breaks after the run finishes
-            TimeSpan? prevSplitTime = method == TimingMethod.RealTime ?
+            ISegment prevSeg = state.Run[prevSplitIndex];
+            TimeSpan? prevSplitTime = method == TimingMethod.RealTime ? // TODO: This is the time the split ends, not the segment time
                 prevSeg.SplitTime.RealTime :
                 prevSeg.SplitTime.GameTime;
+            if (prevSplitIndex > 0)
+            {
+                prevSplitTime -= method == TimingMethod.RealTime ?
+                    state.Run[prevSplitIndex - 1].SplitTime.RealTime :
+                    state.Run[prevSplitIndex - 1].SplitTime.GameTime;
+            }
             TimeSpan? pbSplitTime = method == TimingMethod.RealTime ?
                 prevSeg.PersonalBestSplitTime.RealTime :
                 prevSeg.PersonalBestSplitTime.GameTime;
