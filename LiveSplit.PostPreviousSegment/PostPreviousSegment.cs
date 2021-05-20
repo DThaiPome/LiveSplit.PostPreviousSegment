@@ -108,29 +108,120 @@ namespace LiveSplit
 
         private PPSState GetTargetState(LiveSplitState state)
         {
+            TimingMethod method = GetBetTimingMethod(state);
             if (state.CurrentPhase == TimerPhase.NotRunning || state.CurrentPhase == TimerPhase.Ended)
             {
                 return new PPSState(false, false);
             } else
             {
                 int prevSplit = state.CurrentSplitIndex - 1;
-                TimeSpan? currentSec = state.CurrentTime[TimingMethod.RealTime];
+                TimeSpan? currentSec = state.CurrentTime[method];
                 TimeSpan? thirtySec = new TimeSpan(0, 0, 30);
                 if (prevSplit < 0)
                 {
                     return new PPSState(currentSec < thirtySec, true);
                 } else
                 {
-                    TimeSpan? prevSplitSec = state.Run[prevSplit].SplitTime.RealTime;
+                    TimeSpan? prevSplitSec = method == TimingMethod.RealTime ? 
+                        state.Run[prevSplit].SplitTime.RealTime : 
+                        state.Run[prevSplit].SplitTime.GameTime;
                     TimeSpan? currentSplitSec = currentSec - prevSplitSec;
                     return new PPSState(currentSplitSec < thirtySec, true);
                 }
             }
         }
 
+        private TimingMethod GetBetTimingMethod(LiveSplitState state)
+        {
+            return ComparisonOptionToMethod(this.settings.betComparison, state);
+        }
+
+        private TimingMethod GetSplitTimingMethod(LiveSplitState state)
+        {
+            return ComparisonOptionToMethod(this.settings.splitComparison, state);
+        }
+
+        private static TimingMethod ComparisonOptionToMethod(ComparisonOption opt, LiveSplitState state)
+        {
+            switch (opt)
+            {
+                case ComparisonOption.GameTime:
+                    return TimingMethod.GameTime;
+                case ComparisonOption.RealTime:
+                    return TimingMethod.RealTime;
+                default:
+                    return CurrentComparisonToMethod(state.CurrentComparison);
+            }
+        }
+
+        private static TimingMethod CurrentComparisonToMethod(string current)
+        {
+            if (current == "Real Time")
+            {
+                return TimingMethod.RealTime;
+            } else
+            {
+                return TimingMethod.GameTime;
+            }
+        }
+
         public void OnSplit(object sender, EventArgs e)
         {
             Console.WriteLine("Split!");
+
+            LiveSplitState state = null;
+            try
+            {
+                state = (LiveSplitState)sender;
+            } catch(InvalidCastException err)
+            {
+                return;
+            }
+
+            TimingMethod method = GetSplitTimingMethod(state);
+            int prevSplitIndex = state.CurrentSplitIndex;
+            ISegment prevSeg = state.Run[prevSplitIndex]; // TODO: I think this breaks after the run finishes
+            TimeSpan? prevSplitTime = method == TimingMethod.RealTime ?
+                prevSeg.SplitTime.RealTime :
+                prevSeg.SplitTime.GameTime;
+            TimeSpan? pbSplitTime = method == TimingMethod.RealTime ?
+                prevSeg.PersonalBestSplitTime.RealTime :
+                prevSeg.PersonalBestSplitTime.GameTime;
+            TimeSpan? bestSplitTime = method == TimingMethod.RealTime ?
+                prevSeg.BestSegmentTime.RealTime :
+                prevSeg.BestSegmentTime.GameTime;
+
+            if (pbSplitTime == null || bestSplitTime == null)
+            {
+                Console.WriteLine("No best time found..."); // TODO: It's always this - why?
+            } else
+            {
+                if (prevSplitTime < bestSplitTime)
+                {
+                    Console.WriteLine("Gold!");
+                }
+                else if (prevSplitTime < pbSplitTime - new TimeSpan(0, 0, 0, 0, 100))
+                {
+                    Console.WriteLine("Ahead!");
+                } else if (TimeAbs(prevSplitTime - pbSplitTime) < new TimeSpan(0, 0, 0, 0, 100))
+                {
+                    Console.WriteLine("Tie!");
+                } else
+                {
+                    Console.WriteLine("Behind!");
+                }
+            }
+        }
+
+        private static TimeSpan? TimeAbs(TimeSpan? time)
+        {
+            if (time < new TimeSpan(0, 0, 0))
+            {
+                return -time;
+            } else
+            {
+                return time;
+            }
         }
     }
 }

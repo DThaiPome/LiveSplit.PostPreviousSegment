@@ -31,6 +31,10 @@ namespace LiveSplit.UI.Components
         {
             this.baseApiUrlInput = new System.Windows.Forms.TextBox();
             this.baseApiUrlLabel = new System.Windows.Forms.Label();
+            this.betComparisonLabel = new System.Windows.Forms.Label();
+            this.splitComparisonLabel = new System.Windows.Forms.Label();
+            this.betComparisonInput = new System.Windows.Forms.ComboBox();
+            this.splitComparisonInput = new System.Windows.Forms.ComboBox();
             this.SuspendLayout();
             // 
             // baseApiUrlInput
@@ -50,14 +54,61 @@ namespace LiveSplit.UI.Components
             this.baseApiUrlLabel.TabIndex = 1;
             this.baseApiUrlLabel.Text = "Base API URL";
             // 
+            // betComparisonLabel
+            // 
+            this.betComparisonLabel.AutoSize = true;
+            this.betComparisonLabel.Location = new System.Drawing.Point(3, 35);
+            this.betComparisonLabel.Name = "betComparisonLabel";
+            this.betComparisonLabel.Size = new System.Drawing.Size(108, 17);
+            this.betComparisonLabel.TabIndex = 2;
+            this.betComparisonLabel.Text = "Bet Comparison";
+            // 
+            // splitComparisonLabel
+            // 
+            this.splitComparisonLabel.AutoSize = true;
+            this.splitComparisonLabel.Location = new System.Drawing.Point(3, 62);
+            this.splitComparisonLabel.Name = "splitComparisonLabel";
+            this.splitComparisonLabel.Size = new System.Drawing.Size(114, 17);
+            this.splitComparisonLabel.TabIndex = 3;
+            this.splitComparisonLabel.Text = "Split Comparison";
+            // 
+            // betComparisonInput
+            // 
+            this.betComparisonInput.FormattingEnabled = true;
+            this.betComparisonInput.Items.AddRange(new object[] {
+            "Current Comparison",
+            "Game Time",
+            "Real Time"});
+            this.betComparisonInput.Location = new System.Drawing.Point(118, 32);
+            this.betComparisonInput.Name = "betComparisonInput";
+            this.betComparisonInput.Size = new System.Drawing.Size(301, 24);
+            this.betComparisonInput.TabIndex = 4;
+            // 
+            // splitComparisonInput
+            // 
+            this.splitComparisonInput.FormattingEnabled = true;
+            this.splitComparisonInput.Items.AddRange(new object[] {
+            "Current Comparison",
+            "Game Time",
+            "Real Time"});
+            this.splitComparisonInput.Location = new System.Drawing.Point(118, 63);
+            this.splitComparisonInput.Name = "splitComparisonInput";
+            this.splitComparisonInput.Size = new System.Drawing.Size(301, 24);
+            this.splitComparisonInput.TabIndex = 5;
+            this.splitComparisonInput.SelectionChangeCommitted += new System.EventHandler(this.splitComparisonInputChanged);
+            // 
             // PostPreviousSegmentSettings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.splitComparisonInput);
+            this.Controls.Add(this.betComparisonInput);
+            this.Controls.Add(this.splitComparisonLabel);
+            this.Controls.Add(this.betComparisonLabel);
             this.Controls.Add(this.baseApiUrlLabel);
             this.Controls.Add(this.baseApiUrlInput);
             this.Name = "PostPreviousSegmentSettings";
-            this.Size = new System.Drawing.Size(422, 32);
+            this.Size = new System.Drawing.Size(422, 113);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -67,5 +118,9 @@ namespace LiveSplit.UI.Components
 
         private System.Windows.Forms.TextBox baseApiUrlInput;
         private System.Windows.Forms.Label baseApiUrlLabel;
+        private System.Windows.Forms.Label betComparisonLabel;
+        private System.Windows.Forms.Label splitComparisonLabel;
+        private System.Windows.Forms.ComboBox betComparisonInput;
+        private System.Windows.Forms.ComboBox splitComparisonInput;
     }
 }
