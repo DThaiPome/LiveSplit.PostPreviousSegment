@@ -168,7 +168,7 @@ namespace LiveSplit
             }
 
             TimingMethod method = GetSplitTimingMethod(state);
-            int prevSplitIndex = state.CurrentSplitIndex;
+            int prevSplitIndex = state.CurrentSplitIndex - 1;
             ISegment prevSeg = state.Run[prevSplitIndex]; // TODO: I think this breaks after the run finishes
             TimeSpan? prevSplitTime = method == TimingMethod.RealTime ?
                 prevSeg.SplitTime.RealTime :
