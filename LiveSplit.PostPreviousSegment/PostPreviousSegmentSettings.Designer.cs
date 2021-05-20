@@ -1,5 +1,5 @@
 ﻿
-namespace LiveSplit.PostPreviousSegment
+namespace LiveSplit.UI.Components
 {
     partial class PostPreviousSegmentSettings
     {
@@ -58,7 +58,6 @@ namespace LiveSplit.PostPreviousSegment
             this.Controls.Add(this.baseApiUrlInput);
             this.Name = "PostPreviousSegmentSettings";
             this.Size = new System.Drawing.Size(422, 32);
-            this.Load += new System.EventHandler(this.PostPreviousSegmentSettings_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
 

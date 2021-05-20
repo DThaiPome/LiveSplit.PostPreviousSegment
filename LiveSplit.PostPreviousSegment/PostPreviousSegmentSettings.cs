@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml;
 
-namespace LiveSplit.PostPreviousSegment
+namespace LiveSplit.UI.Components
 {
     public partial class PostPreviousSegmentSettings : UserControl
     {

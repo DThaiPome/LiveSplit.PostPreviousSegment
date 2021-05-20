@@ -6,11 +6,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace LiveSplit.PostPreviousSegment
+namespace LiveSplit
 {
     public class PostPreviousSegmentFactory : IComponentFactory
     {
-        public string ComponentName => "PostToSplitBetBot";
+        public string ComponentName => "PostToSplitBetBot SIXTY FIVE!!!!!";
 
         public string Description => "Make calls to the SplitBetBot API";
 
@@ -18,15 +18,15 @@ namespace LiveSplit.PostPreviousSegment
 
         public string UpdateName => ComponentName;
 
-        public string XMLURL => throw new NotImplementedException();
+        public string XMLURL => "";
 
-        public string UpdateURL => throw new NotImplementedException();
+        public string UpdateURL => "";
 
         public Version Version => new Version("0.0.1");
 
         public IComponent Create(LiveSplitState state)
         {
-            throw new NotImplementedException();
+            return new PostPreviousSegment();
         }
     }
 }

@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Drawing;
 
-namespace LiveSplit.PostPreviousSegment
+namespace LiveSplit
 {
     public class PostPreviousSegment : IComponent
     {

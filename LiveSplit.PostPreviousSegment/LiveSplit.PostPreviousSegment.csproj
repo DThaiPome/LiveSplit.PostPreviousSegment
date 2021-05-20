@@ -5,13 +5,14 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{C2A39D1B-ABC8-48E1-8178-CFB3FFAD4E09}</ProjectGuid>
-    <OutputType>Exe</OutputType>
-    <RootNamespace>LiveSplit.PostPreviousSegment</RootNamespace>
+    <OutputType>Library</OutputType>
+    <RootNamespace>LiveSplit</RootNamespace>
     <AssemblyName>LiveSplit.PostPreviousSegment</AssemblyName>
-    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <Deterministic>true</Deterministic>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -32,21 +33,41 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
-  <ItemGroup>
-    <None Include="App.config" />
-  </ItemGroup>
+  <PropertyGroup>
+    <StartupObject />
+  </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\LiveSplit.Core\LiveSplit.Core.csproj">
       <Project>{6de847db-20a3-4848-aeee-1b4364aecdfb}</Project>
       <Name>LiveSplit.Core</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\LiveSplit\LiveSplit.csproj">
-      <Project>{e8047f95-ba79-4e2e-a9bb-5c48d5fa2467}</Project>
-      <Name>LiveSplit</Name>
+    <ProjectReference Include="..\..\..\UpdateManager\UpdateManager.csproj">
+      <Project>{56DEA3A0-2EB7-493B-B50F-A5E3AA8AE52A}</Project>
+      <Name>UpdateManager</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="PostPreviousSegment.cs" />
+    <Compile Include="PostPreviousSegmentSBB.cs" />
+    <Compile Include="PostPreviousSegmentFactory.cs" />
+    <Compile Include="PostPreviousSegmentSettings.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="PostPreviousSegmentSettings.Designer.cs">
+      <DependentUpon>PostPreviousSegmentSettings.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="PostPreviousSegmentSettings.resx">
+      <DependentUpon>PostPreviousSegmentSettings.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
