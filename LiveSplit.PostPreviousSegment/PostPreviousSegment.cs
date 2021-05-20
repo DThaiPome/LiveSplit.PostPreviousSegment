@@ -30,11 +30,14 @@ namespace LiveSplit
 
         private PostPreviousSegmentSettings settings;
 
+        public bool onSplitAdded;
+
         public PostPreviousSegment()
         {
             this.state = new PPSState(false, false);
             this.settings = new PostPreviousSegmentSettings();
             this.baseApiUrl = this.settings.baseApiUrl;
+            this.onSplitAdded = false;
         }
 
         public string ComponentName => "PostToSplitBetBot";
@@ -89,7 +92,45 @@ namespace LiveSplit
 
         public void Update(IInvalidator invalidator, LiveSplitState state, float width, float height, LayoutMode mode)
         {
-            this.state = new PPSState(false, false); // DOES THIS EVEN HAPPEN??
+            if (!this.onSplitAdded)
+            {
+                state.OnSplit += this.OnSplit;
+                this.onSplitAdded = true;
+            }
+
+            PPSState prevState = this.state;
+            this.state = GetTargetState(state);
+            if (prevState.bettingOpen != this.state.bettingOpen)
+            {
+                Console.WriteLine("Switched!");
+            }
+        }
+
+        private PPSState GetTargetState(LiveSplitState state)
+        {
+            if (state.CurrentPhase == TimerPhase.NotRunning || state.CurrentPhase == TimerPhase.Ended)
+            {
+                return new PPSState(false, false);
+            } else
+            {
+                int prevSplit = state.CurrentSplitIndex - 1;
+                TimeSpan? currentSec = state.CurrentTime[TimingMethod.RealTime];
+                TimeSpan? thirtySec = new TimeSpan(0, 0, 30);
+                if (prevSplit < 0)
+                {
+                    return new PPSState(currentSec < thirtySec, true);
+                } else
+                {
+                    TimeSpan? prevSplitSec = state.Run[prevSplit].SplitTime.RealTime;
+                    TimeSpan? currentSplitSec = currentSec - prevSplitSec;
+                    return new PPSState(currentSplitSec < thirtySec, true);
+                }
+            }
+        }
+
+        public void OnSplit(object sender, EventArgs e)
+        {
+            Console.WriteLine("Split!");
         }
     }
 }

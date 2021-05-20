@@ -10,7 +10,7 @@ namespace LiveSplit
 {
     public class PostPreviousSegmentFactory : IComponentFactory
     {
-        public string ComponentName => "PostToSplitBetBot SIXTY FIVE!!!!!";
+        public string ComponentName => "PostToSplitBetBot";
 
         public string Description => "Make calls to the SplitBetBot API";
 
