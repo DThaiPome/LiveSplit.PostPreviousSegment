@@ -150,18 +150,7 @@ namespace LiveSplit
                 case ComparisonOption.RealTime:
                     return TimingMethod.RealTime;
                 default:
-                    return CurrentComparisonToMethod(state.CurrentComparison);
-            }
-        }
-
-        private static TimingMethod CurrentComparisonToMethod(string current)
-        {
-            if (current == "Real Time")
-            {
-                return TimingMethod.RealTime;
-            } else
-            {
-                return TimingMethod.GameTime;
+                    return state.CurrentTimingMethod;
             }
         }
 
@@ -193,7 +182,7 @@ namespace LiveSplit
 
             if (pbSplitTime == null || bestSplitTime == null)
             {
-                Console.WriteLine("No best time found..."); // TODO: It's always this - why?
+                Console.WriteLine("No best time found...");
             } else
             {
                 if (prevSplitTime < bestSplitTime)
