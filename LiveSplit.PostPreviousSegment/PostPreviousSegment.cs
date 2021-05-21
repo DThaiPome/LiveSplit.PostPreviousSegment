@@ -198,7 +198,7 @@ namespace LiveSplit
 
             if (pbSplitTime == null || bestSplitTime == null)
             {
-                Console.WriteLine("No best time found..."); // TODO - End split with no rewards - make that an input to the API
+                return;
             } else
             {
                 if (prevSplitTime < bestSplitTime)
@@ -242,7 +242,6 @@ namespace LiveSplit
                 HttpContent data = new StringContent("{}", Encoding.UTF8, "application/json");
                 string url = this.settings.baseApiUrl + apiUrl;
                 HttpResponseMessage response = await client.PostAsync(url, data);
-                Console.WriteLine(response.Content.ReadAsStringAsync().Result);
             }
         }
     }
