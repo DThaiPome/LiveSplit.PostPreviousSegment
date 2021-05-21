@@ -7,6 +7,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Drawing;
+using System.Net;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Net.Http.Formatting;
 
 namespace LiveSplit
 {
@@ -26,18 +30,18 @@ namespace LiveSplit
 
         private PPSState state;
 
-        private string baseApiUrl;
-
         private PostPreviousSegmentSettings settings;
 
         public bool onSplitAdded;
+
+        private HttpClient client;
 
         public PostPreviousSegment()
         {
             this.state = new PPSState(false, false);
             this.settings = new PostPreviousSegmentSettings();
-            this.baseApiUrl = this.settings.baseApiUrl;
             this.onSplitAdded = false;
+            this.client = new HttpClient();
         }
 
         public string ComponentName => "PostToSplitBetBot";
@@ -102,7 +106,8 @@ namespace LiveSplit
             this.state = GetTargetState(state);
             if (prevState.bettingOpen != this.state.bettingOpen)
             {
-                Console.WriteLine("Switched!");
+                string b = $"{this.state.bettingOpen}".ToLower();
+                HttpPost($"SetBettingOpen?open={b}");
             }
         }
 
@@ -170,41 +175,48 @@ namespace LiveSplit
             TimingMethod method = GetSplitTimingMethod(state);
             int prevSplitIndex = state.CurrentSplitIndex - 1;
             ISegment prevSeg = state.Run[prevSplitIndex];
-            TimeSpan? prevSplitTime = method == TimingMethod.RealTime ? // TODO: This is the time the split ends, not the segment time
+            TimeSpan? prevSplitTime = method == TimingMethod.RealTime ?
                 prevSeg.SplitTime.RealTime :
                 prevSeg.SplitTime.GameTime;
             if (prevSplitIndex > 0)
             {
-                prevSplitTime -= method == TimingMethod.RealTime ?
+                prevSplitTime -= method == TimingMethod.RealTime ? // I have to do this to actually get the segment time
                     state.Run[prevSplitIndex - 1].SplitTime.RealTime :
                     state.Run[prevSplitIndex - 1].SplitTime.GameTime;
             }
-            TimeSpan? pbSplitTime = method == TimingMethod.RealTime ?
+            TimeSpan? pbSplitTime = method == TimingMethod.RealTime ? // TODO: might have to do the same subtraction as above with this ^ do further testing
                 prevSeg.PersonalBestSplitTime.RealTime :
                 prevSeg.PersonalBestSplitTime.GameTime;
             TimeSpan? bestSplitTime = method == TimingMethod.RealTime ?
                 prevSeg.BestSegmentTime.RealTime :
                 prevSeg.BestSegmentTime.GameTime;
 
+            string comp = "";
+
             if (pbSplitTime == null || bestSplitTime == null)
             {
-                Console.WriteLine("No best time found...");
+                Console.WriteLine("No best time found..."); // TODO - End split with no rewards - make that an input to the API
             } else
             {
                 if (prevSplitTime < bestSplitTime)
                 {
-                    Console.WriteLine("Gold!");
+                    comp = "gold";
                 }
                 else if (prevSplitTime < pbSplitTime - new TimeSpan(0, 0, 0, 0, 100))
                 {
-                    Console.WriteLine("Ahead!");
+                    comp = "ahead";
                 } else if (TimeAbs(prevSplitTime - pbSplitTime) < new TimeSpan(0, 0, 0, 0, 100))
                 {
-                    Console.WriteLine("Tie!");
+                    comp = "tied";
                 } else
                 {
-                    Console.WriteLine("Behind!");
+                    comp = "behind";
                 }
+            }
+
+            if (comp != "")
+            {
+                HttpPost($"OnSplit?result={comp}");
             }
         }
 
@@ -217,6 +229,16 @@ namespace LiveSplit
             {
                 return time;
             }
+        }
+
+        private class EmptyPostBody { }
+
+        private async void HttpPost(string apiUrl)
+        {
+            HttpContent data = new StringContent("{}", Encoding.UTF8, "application/json");
+            string url = this.settings.baseApiUrl + apiUrl;
+            HttpResponseMessage response = await client.PostAsync(url, data);
+            Console.WriteLine(response.Content.ReadAsStringAsync().Result);
         }
     }
 }

@@ -83,6 +83,7 @@ namespace LiveSplit.UI.Components
             this.betComparisonInput.Name = "betComparisonInput";
             this.betComparisonInput.Size = new System.Drawing.Size(301, 24);
             this.betComparisonInput.TabIndex = 4;
+            this.betComparisonInput.SelectionChangeCommitted += new System.EventHandler(this.betComparisonInputChanged);
             // 
             // splitComparisonInput
             // 

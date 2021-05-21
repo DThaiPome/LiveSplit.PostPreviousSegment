@@ -11,6 +11,8 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml;
 
+// TODO: Add setting to disable HTTP requests
+
 namespace LiveSplit.UI.Components
 {
     public partial class PostPreviousSegmentSettings : UserControl
@@ -33,6 +35,11 @@ namespace LiveSplit.UI.Components
         }
 
         private void baseApiUrlChanged(object sender, EventArgs e)
+        {
+            this.baseApiUrl = this.baseApiUrlInput.Text;
+        }
+
+        private void betComparisonInputChanged(object sender, EventArgs e)
         {
             string selected = this.betComparisonInput.SelectedItem.ToString();
             switch (selected)
