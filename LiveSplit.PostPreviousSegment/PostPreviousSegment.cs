@@ -121,17 +121,17 @@ namespace LiveSplit
             {
                 int prevSplit = state.CurrentSplitIndex - 1;
                 TimeSpan? currentSec = state.CurrentTime[method];
-                TimeSpan? thirtySec = new TimeSpan(0, 0, 30);
+                TimeSpan? durationSec = new TimeSpan(0, 0, this.settings.betDuration);
                 if (prevSplit < 0)
                 {
-                    return new PPSState(currentSec < thirtySec, true);
+                    return new PPSState(currentSec < durationSec, true);
                 } else
                 {
                     TimeSpan? prevSplitSec = method == TimingMethod.RealTime ? 
                         state.Run[prevSplit].SplitTime.RealTime : 
                         state.Run[prevSplit].SplitTime.GameTime;
                     TimeSpan? currentSplitSec = currentSec - prevSplitSec;
-                    return new PPSState(currentSplitSec < thirtySec, true);
+                    return new PPSState(currentSplitSec < durationSec, true);
                 }
             }
         }
@@ -178,15 +178,18 @@ namespace LiveSplit
             TimeSpan? prevSplitTime = method == TimingMethod.RealTime ?
                 prevSeg.SplitTime.RealTime :
                 prevSeg.SplitTime.GameTime;
+            TimeSpan? pbSplitTime = method == TimingMethod.RealTime ? // TODO: might have to do the same subtraction as above with this ^ do further testing
+                prevSeg.PersonalBestSplitTime.RealTime :
+                prevSeg.PersonalBestSplitTime.GameTime;
             if (prevSplitIndex > 0)
             {
                 prevSplitTime -= method == TimingMethod.RealTime ? // I have to do this to actually get the segment time
                     state.Run[prevSplitIndex - 1].SplitTime.RealTime :
                     state.Run[prevSplitIndex - 1].SplitTime.GameTime;
+                pbSplitTime -= method == TimingMethod.RealTime ?
+                    state.Run[prevSplitIndex - 1].PersonalBestSplitTime.RealTime :
+                    state.Run[prevSplitIndex - 1].PersonalBestSplitTime.GameTime;
             }
-            TimeSpan? pbSplitTime = method == TimingMethod.RealTime ? // TODO: might have to do the same subtraction as above with this ^ do further testing
-                prevSeg.PersonalBestSplitTime.RealTime :
-                prevSeg.PersonalBestSplitTime.GameTime;
             TimeSpan? bestSplitTime = method == TimingMethod.RealTime ?
                 prevSeg.BestSegmentTime.RealTime :
                 prevSeg.BestSegmentTime.GameTime;
@@ -213,7 +216,6 @@ namespace LiveSplit
                     comp = "behind";
                 }
             }
-
             if (comp != "")
             {
                 HttpPost($"OnSplit?result={comp}");
@@ -235,10 +237,13 @@ namespace LiveSplit
 
         private async void HttpPost(string apiUrl)
         {
-            HttpContent data = new StringContent("{}", Encoding.UTF8, "application/json");
-            string url = this.settings.baseApiUrl + apiUrl;
-            HttpResponseMessage response = await client.PostAsync(url, data);
-            Console.WriteLine(response.Content.ReadAsStringAsync().Result);
+            if (this.settings.enableApiCalls)
+            {
+                HttpContent data = new StringContent("{}", Encoding.UTF8, "application/json");
+                string url = this.settings.baseApiUrl + apiUrl;
+                HttpResponseMessage response = await client.PostAsync(url, data);
+                Console.WriteLine(response.Content.ReadAsStringAsync().Result);
+            }
         }
     }
 }

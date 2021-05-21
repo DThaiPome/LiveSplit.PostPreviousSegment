@@ -19,8 +19,9 @@ namespace LiveSplit.UI.Components
     {
         public string baseApiUrl { get; private set; }
         public ComparisonOption betComparison { get; private set; }
-
         public ComparisonOption splitComparison { get; private set; }
+        public bool enableApiCalls { get; private set; }
+        public int betDuration { get; private set; }
 
         public PostPreviousSegmentSettings()
         {
@@ -99,6 +100,23 @@ namespace LiveSplit.UI.Components
         private int CreateSettingsNode(XmlDocument document, XmlElement parent)
         {
             return SettingsHelper.CreateSetting(document, parent, "baseApiUrl", baseApiUrl);
+        }
+
+        private void enableApiCalls_CheckedChanged(object sender, EventArgs e)
+        {
+            this.enableApiCalls = this.enableApiCallsInput.Checked;
+        }
+
+        private void betDurationInput_TextChanged(object sender, EventArgs e)
+        {
+            string durStr = this.betDurationInput.Text;
+            if (int.TryParse(durStr, out int r))
+            {
+                this.betDuration = r;
+            } else
+            {
+                this.betDurationInput.Text = this.betDuration.ToString();
+            }
         }
     }
 }
