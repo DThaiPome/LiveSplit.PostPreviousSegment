@@ -99,6 +99,7 @@ namespace LiveSplit
             if (!this.onSplitAdded)
             {
                 state.OnSplit += this.OnSplit;
+                state.OnStart += this.OnStart;
                 this.onSplitAdded = true;
             }
 
@@ -109,6 +110,12 @@ namespace LiveSplit
                 string b = $"{this.state.bettingOpen}".ToLower();
                 HttpPost($"SetBettingOpen?open={b}");
             }
+        }
+
+
+        private void OnStart(object sender, EventArgs e)
+        {
+            HttpPost($"SetBettingPeriod?time={this.settings.betDuration}");
         }
 
         private PPSState GetTargetState(LiveSplitState state)
